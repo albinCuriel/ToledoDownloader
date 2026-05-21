@@ -1,65 +1,57 @@
-# Toledo Lecture Downloader Chrome Extension 🎓🚀
+# Toledo Lecture Downloader Chrome Extensie 🎓🚀
 
-A modern, premium Manifest V3 Google Chrome Extension designed for students to easily download lecture videos from KU Leuven's **Toledo** learning portal in the **absolute highest quality available** with a single click.
+Een super makkelijke, moderne Google Chrome-extensie speciaal gemaakt voor studenten om video-colleges (kaltura-video's) van **Toledo (KU Leuven)** direct te downloaden. 
 
-This project is fully open-source, allowing students, teachers, and developers to contribute, update, and deploy new features.
-
----
-
-## ✨ Features
-
-* **Highest Quality Downloads**: Automatically extracts the active Kaltura Session (`ks`) token and requests the original high-resolution source file (`flavorParamId/0`), bypassing low-quality transcodes.
-* **Dual Download Modes**:
-  * Injects a sleek **Download Lecture** button directly onto the screen next to the embedded Kaltura player.
-  * Provides a gorgeous **Glassmorphic Extension Popup** in your browser toolbar with status indicators and a download toggle.
-* **Dynamic, Clean File Naming**: Extracts the actual lecture title (e.g. `Recording guest lecture retailing (Els Breugelmans)`) and saves it neatly inside a `Toledo/` subfolder in your downloads, sanitizing any illegal filesystem characters.
-* **Manifest V3 Compliant**: Built with modern security and performance guidelines for long-term Chrome compatibility.
+Geen gedoe met ingewikkelde codes of scripts: download jouw college met **één klik** direct in je favoriete kwaliteit!
 
 ---
 
-## 🚀 Easy Installation Guide (For Students)
+## 📸 Hoe het eruit ziet
 
-### Step 1: Download the Extension
-1. Download this repository as a ZIP file (click **Code > Download ZIP** on GitHub).
-2. Extract the ZIP folder anywhere on your computer (e.g. in your Documents or a designated extensions folder).
+![Toledo Downloader Interface](popup_mockup.png)
 
-### Step 2: Load it in Google Chrome
-1. Open Google Chrome and navigate to:
+---
+
+## ✨ Wat kan deze extensie?
+
+*   **Kies zelf je kwaliteit**: Kies in het menu de resolutie die jij wilt (bijvoorbeeld Source/Originele kwaliteit, 720p, 360p, etc.).
+*   **Super makkelijke knoppen**: 
+    1. Er verschijnt automatisch een handige blauwe **Download Lecture** knop rechtsonder op je scherm bij de video.
+    2. Of gebruik de prachtige popup in je Chrome-werkbalk (zoals hierboven te zien).
+*   **Nette bestandsnamen**: Je video's worden automatisch netjes opgeslagen met de **echte naam van het college** (bijvoorbeeld `Toledo/Statistiek Hoorcollege 3.mp4`) in plaats van vage codes!
+*   **Altijd werkend & veilig**: Gebruikt de nieuwste Chrome-technologie (Manifest V3) en werkt direct via de officiële downloads-manager van je browser.
+
+---
+
+## 🚀 Simpele Installatie (Binnen 1 minuut!)
+
+Omdat dit een handgemaakte extensie is voor studenten, staat deze niet in de standaard Chrome Web Store. Je installeert hem heel makkelijk zelf:
+
+### Stap 1: Download de Extensie
+1. Klik hier op GitHub rechtsboven op de groene knop **Code** en kies **Download ZIP**.
+2. Pak het ZIP-bestand uit op een handige plek op je computer (bijvoorbeeld in je Documenten).
+
+### Stap 2: Laad de extensie in Chrome
+1. Open Google Chrome en surf naar:
    ```text
    chrome://extensions/
    ```
-2. In the top-right corner, toggle **Developer mode** to **ON**.
-3. In the top-left corner, click **Load unpacked** (Uitpakken laden).
-4. Select the extracted `ToledoDownloaderExtension` folder.
+2. Schakel rechtsboven de **Ontwikkelaarsmodus** (Developer mode) **AAN**.
+3. Klik linksboven op de knop **Uitpakken laden** (Load unpacked).
+4. Selecteer de map **ToledoDownloaderExtension** (de map die je net hebt uitgepakt).
 
-**Done!** The extension is now active. Refresh your Toledo page and start downloading!
-
----
-
-## 🛠️ Technical Architecture
-
-Unlike older userscripts that relied on deprecated endpoints or scraped low-resolution assets, this extension uses a resilient multi-stage pipeline:
-
-1. **Content Script (`content.js`)**: Runs in the context of the Toledo frames and the Kaltura iframe (`kaltura-kaf.edu.kuleuven.cloud`).
-   * It scans the DOM and scripts using regex to extract the Kaltura `entryId` and the active session token `ks` (identifiable by the `djJ8` signature).
-   * It extracts the clean document title.
-2. **Message Broker**: Communicates these tokens to the background script.
-3. **Background Worker (`background.js`)**: Initiates direct progressive downloads.
-   * If a `ks` token is present, it constructs a secure query to the original high-definition source endpoint:
-     `https://www.kaltura.com/p/{partnerId}/sp/{partnerId}00/playManifest/entryId/{entryId}/format/url/protocol/https/flavorParamId/0?ks={ks}`
-   * If no `ks` is found, it falls back to the default progressive transcode.
-   * Triggers Chrome's native `downloads` API to save the video with a clean, customized title.
+**Klaar! 🎉** De extensie is nu actief. Ga naar Toledo, open een video en begin direct met downloaden!
 
 ---
 
-## 🤝 Contributing & Customization
+## 💡 Handige Tips voor Gebruik
 
-Since this is open source, contributions are welcome! 
-* **Want to support other universities?** You can easily update `manifest.json` and `content.js` to support your school's domain and Partner ID.
-* **Want to submit a bug fix?** Open an Issue or submit a Pull Request.
+*   **Werkt de knop niet direct?** Start de video heel even op Toledo (klik op play) zodat de extensie de video-gegevens kan inladen.
+*   **Waar staan de downloads?** Al je colleges worden netjes geordend in een submapje genaamd `Toledo/` in je normale Downloads-map.
 
 ---
 
-## 📜 License
+## 🤝 Delen & Meehelpen
+Ken je medestudenten die dit ook kunnen gebruiken? Deel deze GitHub of stuur ze simpelweg het ZIP-bestand! Het project is volledig open-source, dus als studenten of leerkrachten updates willen maken, kan dat heel makkelijk via een Pull Request.
 
-This project is licensed under the MIT License. Created for personal, educational, and offline viewing purposes only. Do not redistribute lecture materials without appropriate university permission.
+*Gemaakt voor educatieve doeleinden en offline studiedoeleinden.*

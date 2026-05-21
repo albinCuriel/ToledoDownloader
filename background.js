@@ -12,20 +12,21 @@ function sanitizeFilename(filename) {
     .trim();
 }
 
-// Listen for messages from content scripts or popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "download_video") {
-    const { entryId, partnerId, title, ks } = message;
+    const { entryId, partnerId, title, ks, flavorId } = message;
     
-    console.log(`[ToledoDownloader] Download requested for Entry: ${entryId}, Title: ${title}, KS present: ${!!ks}`);
+    console.log(`[ToledoDownloader] Download requested for Entry: ${entryId}, Title: ${title}, KS: ${!!ks}, Flavor: ${flavorId || 'source'}`);
     
+    const ksParam = ks ? `?ks=${encodeURIComponent(ks)}` : '';
     let downloadUrl;
-    if (ks) {
-      // flavorParamId/0 represents original source file (highest possible quality)
-      downloadUrl = `https://www.kaltura.com/p/${partnerId}/sp/${partnerId}00/playManifest/entryId/${entryId}/format/url/protocol/https/flavorParamId/0?ks=${encodeURIComponent(ks)}`;
+    
+    if (flavorId && flavorId !== "source") {
+      // Direct progressive download for selected transcode flavor
+      downloadUrl = `https://www.kaltura.com/p/${partnerId}/sp/${partnerId}00/playManifest/entryId/${entryId}/flavorId/${flavorId}/format/url/protocol/https${ksParam}`;
     } else {
-      // Fallback progressive download
-      downloadUrl = `https://www.kaltura.com/p/${partnerId}/sp/${partnerId}00/playManifest/entryId/${entryId}/format/url/protocol/https/flavorParamIds/0`;
+      // Original source file (highest possible uploaded quality)
+      downloadUrl = `https://www.kaltura.com/p/${partnerId}/sp/${partnerId}00/playManifest/entryId/${entryId}/format/url/protocol/https/flavorParamId/0${ksParam}`;
     }
     
     const cleanTitle = sanitizeFilename(title || `Toledo_Video_${entryId}`);
