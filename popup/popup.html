@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toledo Downloader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo-wrapper">
+        <div class="logo-glow"></div>
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/>
+          </svg>
+        </div>
+      </div>
+      <div class="brand">
+        <h1>Toledo <span>Downloader</span></h1>
+        <p class="subtitle">KU Leuven Lecture Downloader</p>
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <main class="main-content">
+      <!-- Status Card -->
+      <div class="glass-card status-card">
+        <div class="status-indicator">
+          <div id="status-dot" class="dot dot-searching"></div>
+          <span id="status-text">Scanning page...</span>
+        </div>
+        
+        <!-- Detected Video Details (Shown if video found) -->
+        <div id="video-details" class="video-details hide">
+          <h3 id="video-title" class="video-title">Recording guest lecture retailing</h3>
+          <div class="meta-row">
+            <span class="meta-label">ID:</span>
+            <span id="video-id" class="meta-value">1_pm2lykwh</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Action (Pulsing download button when active) -->
+      <button id="download-btn" class="download-btn disabled" disabled>
+        <span class="btn-text">No Lecture Detected</span>
+        <svg class="btn-icon" viewBox="0 0 24 24">
+          <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
+        </svg>
+      </button>
+
+      <!-- Easy Share Card -->
+      <div class="glass-card share-card">
+        <h4>🎓 Medestudenten helpen?</h4>
+        <p>Dit script is gemaakt om makkelijk te delen. Laad de map in Chrome Developer Mode en deel het met je vrienden!</p>
+      </div>
+    </main>
+
+    <!-- Footer / Guide -->
+    <footer class="footer">
+      <div class="guide-toggle" id="guide-toggle">
+        <span>How to use?</span>
+        <svg class="chevron-icon" viewBox="0 0 24 24">
+          <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+        </svg>
+      </div>
+      <div class="guide-content hide" id="guide-content">
+        <ol>
+          <li>Open de Toledo pagina met het college.</li>
+          <li>Zorg dat de video is ingeladen of start met afspelen.</li>
+          <li>Klik op de blauwe <strong>Download Lecture</strong> knop die op het scherm verschijnt of klik hierboven!</li>
+        </ol>
+      </div>
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
