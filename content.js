@@ -134,7 +134,7 @@
     style.textContent = `
       #toledo-download-btn-container {
         position: fixed;
-        bottom: 20px;
+        bottom: 85px; /* Shifted up to sit safely above the media player controls bar */
         right: 20px;
         z-index: 2147483647; /* Ensure it is on top of everything including players */
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -142,13 +142,13 @@
       .toledo-dl-btn {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         background: linear-gradient(135deg, #0f62fe 0%, #002d9c 100%);
         color: #ffffff;
         border: none;
-        border-radius: 12px;
-        padding: 10px 16px;
-        font-size: 14px;
+        border-radius: 10px; /* More compact borders */
+        padding: 8px 12px;   /* Sleeker, compact padding */
+        font-size: 12px;     /* Subtle but clear text size */
         font-weight: 600;
         cursor: pointer;
         box-shadow: 0 4px 12px rgba(15, 98, 254, 0.35);
@@ -167,8 +167,8 @@
         box-shadow: 0 2px 8px rgba(15, 98, 254, 0.3);
       }
       .toledo-dl-icon {
-        width: 16px;
-        height: 16px;
+        width: 14px;
+        height: 14px;
         fill: currentColor;
         transition: transform 0.3s ease;
       }

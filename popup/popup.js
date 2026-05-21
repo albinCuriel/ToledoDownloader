@@ -145,8 +145,77 @@ document.addEventListener("DOMContentLoaded", () => {
     return uniqueQualities;
   }
 
-  // Fetch available transcodes from Kaltura's API
+  // Fetch available transcodes from Kaltura's JSON API (guarantees HD/Full HD detection)
   function fetchVideoQualities(entryId, ks) {
+    const url = `https://www.kaltura.com/api_v3/service/flavorasset/action/list`;
+    const formData = new FormData();
+    formData.append("filter:entryIdEqual", entryId);
+    if (ks) {
+      formData.append("ks", ks);
+    }
+    formData.append("format", "1"); // Requests JSON format
+
+    fetch(url, {
+      method: "POST",
+      body: formData
+    })
+    .then(response => {
+      if (!response.ok) throw new Error("Kaltura JSON API Status " + response.status);
+      return response.json();
+    })
+    .then(data => {
+      if (!data || !data.objects || !Array.isArray(data.objects)) {
+        throw new Error("Invalid Kaltura API JSON response");
+      }
+
+      const qualities = [];
+      
+      // Filter for video flavor assets that are ready (status 2 = READY)
+      const readyAssets = data.objects.filter(asset => {
+        return (asset.status == 2 || asset.status == "2") && asset.width > 0;
+      });
+
+      // Sort assets by height descending (highest resolution first)
+      readyAssets.sort((a, b) => b.height - a.height);
+
+      readyAssets.forEach(asset => {
+        const sizeMB = asset.size ? (asset.size / (1024 * 1024)).toFixed(0) + " MB" : "";
+        const isOriginal = asset.isOriginal || asset.flavorParamsId === 0 || asset.flavorParamsId === "0";
+        
+        let label = `${asset.height}p`;
+        if (asset.height >= 720) {
+          label += " HD";
+        }
+        if (isOriginal) {
+          label = `Source (Oorspronkelijke kwaliteit) - ${label}`;
+        }
+        if (sizeMB) {
+          label += ` (${sizeMB})`;
+        }
+
+        qualities.push({
+          flavorId: isOriginal ? "source" : asset.id,
+          resolution: `${asset.width}x${asset.height}`,
+          label: label,
+          height: asset.height,
+          isOriginal: isOriginal
+        });
+      });
+
+      if (qualities.length === 0) {
+        throw new Error("No ready video flavor assets found in JSON");
+      }
+
+      populateQualitySelect(qualities);
+    })
+    .catch(err => {
+      console.warn("[ToledoDownloader] Failed to fetch via JSON API, using HLS manifest fallback:", err);
+      fetchVideoQualitiesM3U8Fallback(entryId, ks);
+    });
+  }
+
+  // Fallback HLS playlist parser (runs if the JSON API is unreachable or fails)
+  function fetchVideoQualitiesM3U8Fallback(entryId, ks) {
     const partnerId = "2375821";
     const manifestUrl = `https://www.kaltura.com/p/${partnerId}/sp/${partnerId}00/playManifest/entryId/${entryId}/protocol/https/format/applehttp/a.m3u8${ks ? '?ks=' + encodeURIComponent(ks) : ''}`;
 
@@ -161,7 +230,6 @@ document.addEventListener("DOMContentLoaded", () => {
       })
       .catch(err => {
         console.warn("[ToledoDownloader] Failed to parse dynamic HLS resolutions:", err);
-        // Fallback: Populate with source download only
         populateQualitySelect([
           { flavorId: 'source', resolution: 'Original Source', label: 'Source (Oorspronkelijke kwaliteit)' }
         ]);

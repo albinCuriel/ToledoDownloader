@@ -4,20 +4,12 @@ Een super makkelijke, moderne Google Chrome-extensie speciaal gemaakt voor stude
 
 Geen gedoe met ingewikkelde codes of scripts: download jouw college met **één klik** direct in je favoriete kwaliteit!
 
----
-
-## 📸 Hoe het eruit ziet
-
-![Toledo Downloader Interface](popup_mockup.png)
-
----
-
 ## ✨ Wat kan deze extensie?
 
-*   **Kies zelf je kwaliteit**: Kies in het menu de resolutie die jij wilt (bijvoorbeeld Source/Originele kwaliteit, 720p, 360p, etc.).
+*   **Kies zelf je kwaliteit**: Kies in het menu de resolutie die jij wilt (bijvoorbeeld Source/Originele kwaliteit, 720p HD, 360p, etc. inclusief handige bestandsgrootte indicatoren!).
 *   **Super makkelijke knoppen**: 
-    1. Er verschijnt automatisch een handige blauwe **Download Lecture** knop rechtsonder op je scherm bij de video.
-    2. Of gebruik de prachtige popup in je Chrome-werkbalk (zoals hierboven te zien).
+    1. Er verschijnt automatisch een handige blauwe **Download Lecture** knop rechtsonder bij de video.
+    2. Of gebruik de prachtige popup in je Chrome-werkbalk.
 *   **Nette bestandsnamen**: Je video's worden automatisch netjes opgeslagen met de **echte naam van het college** (bijvoorbeeld `Toledo/Statistiek Hoorcollege 3.mp4`) in plaats van vage codes!
 *   **Altijd werkend & veilig**: Gebruikt de nieuwste Chrome-technologie (Manifest V3) en werkt direct via de officiële downloads-manager van je browser.
 
