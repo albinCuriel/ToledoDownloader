@@ -40,9 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Query content script
-    chrome.tabs.sendMessage(activeTab.id, { action: "get_video_info" }, (response) => {
-      // Handle when content script is not loaded or didn't respond
+    // Query background script's cross-frame active video cache
+    chrome.runtime.sendMessage({ action: "get_active_video", tabId: activeTab.id }, (response) => {
       if (chrome.runtime.lastError || !response) {
         setNoVideoState("Please refresh the page to scan");
         return;

@@ -235,10 +235,31 @@
   }
 
   // Periodic scanner to handle dynamic JS loading/SPAs
+  let lastReportedEntryId = null;
+
   function scanAndInject() {
     const entryId = findEntryId();
     if (entryId) {
       injectDownloadButton(entryId);
+      
+      // Notify the background script so the popup can read it even across nested iframes
+      if (lastReportedEntryId !== entryId) {
+        lastReportedEntryId = entryId;
+        
+        let videoTitle = document.title || 'Lecture_Video';
+        videoTitle = videoTitle.replace(/\s*-\s*Toledo/gi, '')
+                               .replace(/\s*-\s*Kaltura\s*Player/gi, '')
+                               .replace(/Recording\s+/gi, 'Recording ')
+                               .trim();
+        const ks = findKsToken();
+
+        chrome.runtime.sendMessage({
+          action: "video_detected",
+          entryId: entryId,
+          title: videoTitle,
+          ks: ks
+        });
+      }
     }
   }
 
