@@ -66,6 +66,14 @@
       }
     } catch (e) {}
 
+    // 3. Search in current URL query parameters
+    try {
+      const urlKsMatch = location.href.match(/[?&]ks=([a-zA-Z0-9_=-]+)/i);
+      if (urlKsMatch && urlKsMatch[1]) {
+        return urlKsMatch[1];
+      }
+    } catch (e) {}
+
     return null;
   }
 
@@ -114,6 +122,12 @@
 
   // Inject a beautiful download button onto the page
   function injectDownloadButton(entryId) {
+    // Skip button injection inside Kaltura or other player embeds
+    if (location.href.includes("kaltura.com") || location.href.includes("iframeembed") || location.href.includes("embedIframeJs")) {
+      console.log("[ToledoDownloader] Skipping button injection in embed iframe, but scanning for video metadata...");
+      return;
+    }
+
     if (document.getElementById('toledo-download-btn-container')) return;
 
     // Get the title of the lecture

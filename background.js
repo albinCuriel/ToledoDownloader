@@ -18,11 +18,30 @@ function sanitizeFilename(filename) {
     .trim();
 }
 
-// Clear cached video entry when navigation occurs on a tab
+// Clear cached video entry when navigation occurs on a tab (ignores internal Blackboard router redirects)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.url) {
-    delete activeVideosByTab[tabId];
-    console.log(`[ToledoDownloader] Cleared active video cache for Tab ${tabId} due to navigation`);
+    const video = activeVideosByTab[tabId];
+    if (video) {
+      // Only clear if the new URL is not on kuleuven
+      if (!changeInfo.url.includes("kuleuven.cloud") && !changeInfo.url.includes("kuleuven.be")) {
+        delete activeVideosByTab[tabId];
+        console.log(`[ToledoDownloader] Cleared active video cache for Tab ${tabId} due to navigating away from KU Leuven`);
+      } else {
+        // If they are still on KU Leuven, check if they switched to a completely different course
+        // Blackboard course URLs look like: /ultra/courses/_124092_1/...
+        const getCourseId = (url) => {
+          const match = url.match(/\/courses\/(_[0-9]+_1)/);
+          return match ? match[1] : null;
+        };
+        const oldCourse = getCourseId(video.tabUrl || "");
+        const newCourse = getCourseId(changeInfo.url);
+        if (oldCourse && newCourse && oldCourse !== newCourse) {
+          delete activeVideosByTab[tabId];
+          console.log(`[ToledoDownloader] Cleared active video cache for Tab ${tabId} due to course switch`);
+        }
+      }
+    }
   }
 });
 
@@ -33,13 +52,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "video_detected") {
     const tabId = sender.tab ? sender.tab.id : null;
     if (tabId) {
+      const existing = activeVideosByTab[tabId];
+      // If we already have the entry, and the incoming one doesn't have a ks but the existing does, retain the existing ks!
+      const ks = message.ks || (existing && existing.entryId === message.entryId ? existing.ks : null);
+      
       activeVideosByTab[tabId] = {
         entryId: message.entryId,
-        title: message.title,
-        ks: message.ks,
+        title: message.title || (existing ? existing.title : ""),
+        ks: ks,
+        tabUrl: sender.tab.url || "",
         timestamp: Date.now()
       };
-      console.log(`[ToledoDownloader] Video cached for Tab ${tabId}: ${message.entryId}`);
+      console.log(`[ToledoDownloader] Video cached for Tab ${tabId}: ${message.entryId}, KS: ${!!ks}`);
     }
     return false; // Synchronous response
   }
@@ -58,7 +82,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   
   // 3. Download execution (auto-resolving highest quality transcode or specific selected flavor)
   if (message.action === "download_video") {
-    const { entryId, partnerId, title, ks, flavorId } = message;
+    const tabId = sender.tab ? sender.tab.id : null;
+    let { entryId, partnerId, title, ks, flavorId } = message;
+    
+    // If ks is missing from content script message, restore it from our background tab cache!
+    if (!ks && tabId && activeVideosByTab[tabId] && activeVideosByTab[tabId].entryId === entryId) {
+      ks = activeVideosByTab[tabId].ks;
+      console.log(`[ToledoDownloader] Restored missing KS from background cache for Entry: ${entryId}`);
+    }
     
     console.log(`[ToledoDownloader] Download requested for Entry: ${entryId}, Title: ${title}, KS: ${!!ks}, Flavor: ${flavorId || 'auto-resolve highest'}`);
     

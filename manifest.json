@@ -3,6 +3,12 @@
   "name": "Toledo Lecture Downloader",
   "version": "1.0.0",
   "description": "Download KU Leuven Toledo college video lectures in high quality with a single click.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "toledodownloader@albin.curiel",
+      "strict_min_version": "109.0"
+    }
+  },
   "permissions": [
     "downloads",
     "activeTab",
@@ -29,7 +35,8 @@
     {
       "matches": [
         "https://*.kuleuven.cloud/*",
-        "https://*.kuleuven.be/*"
+        "https://*.kuleuven.be/*",
+        "https://*.kaltura.com/*"
       ],
       "js": ["content.js"],
       "run_at": "document_end",
